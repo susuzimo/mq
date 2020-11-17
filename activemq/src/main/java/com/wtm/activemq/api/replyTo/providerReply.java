@@ -1,12 +1,13 @@
-package com.wtm.activemq.api;
+package com.wtm.activemq.api.replyTo;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import javax.jms.*;
 
-
-public class provider {
+public class providerReply {
     //默认连接用户名
     private static final String USERNAME
             = ActiveMQConnection.DEFAULT_USER;
@@ -35,22 +36,20 @@ public class provider {
             connection.start();
             /* 第一个参数表示是否使用事务，第二次参数表示是否自动确认*/
             session = connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
-            destination = session.createTopic("HelloActivemq");
+            destination = session.createQueue("request-response");
             messageProducer = session.createProducer(destination);
             String msg = "发送消息"+System.currentTimeMillis();
             TextMessage message = session.createTextMessage(msg);
             System.out.println("发送消息:"+msg);
+
+            //配置消费者应答
+            Destination temporaryQueue = session.createQueue("response");
+            //MessageConsumer consumer = session.createConsumer(temporaryQueue);
+            message.setJMSReplyTo(temporaryQueue);
+            message.setJMSCorrelationID(System.currentTimeMillis()+"");
             messageProducer.send(message);
         } catch (JMSException e) {
             e.printStackTrace();
-        }finally {
-            if(connection!=null){
-                try {
-                    connection.close();
-                } catch (JMSException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 }

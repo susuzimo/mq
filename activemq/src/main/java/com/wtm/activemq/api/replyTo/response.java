@@ -1,12 +1,13 @@
-package com.wtm.activemq.api;
+package com.wtm.activemq.api.replyTo;
+
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.stereotype.Component;
 
 import javax.jms.*;
 
-
-public class provider {
+public class response{
     //默认连接用户名
     private static final String USERNAME
             = ActiveMQConnection.DEFAULT_USER;
@@ -18,29 +19,24 @@ public class provider {
             = ActiveMQConnection.DEFAULT_BROKER_URL;
     //发送的消息数量
     private static final int SENDNUM = 3;
-    public static void main(String[] args) throws InterruptedException {
-        //连接工厂
+    public static void main(String[] args) {
         ConnectionFactory connectionFactory;
-        //连接
         Connection connection = null;
-        //会话
         Session session;
-        //目的地
         Destination destination;
-        //生产者
-        MessageProducer messageProducer;
+        MessageConsumer consumer;
         connectionFactory = new ActiveMQConnectionFactory(USERNAME,PASSWORD,BROKEURL);
         try {
             connection = connectionFactory.createConnection();
             connection.start();
-            /* 第一个参数表示是否使用事务，第二次参数表示是否自动确认*/
+            //是否开启事务,自动确认
             session = connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
-            destination = session.createTopic("HelloActivemq");
-            messageProducer = session.createProducer(destination);
-            String msg = "发送消息"+System.currentTimeMillis();
-            TextMessage message = session.createTextMessage(msg);
-            System.out.println("发送消息:"+msg);
-            messageProducer.send(message);
+            destination = session.createQueue("response");
+            consumer = session.createConsumer(destination);
+            Message message;
+            while ((message=consumer.receive())!=null){
+                System.out.println(((TextMessage) message).getText());
+            }
         } catch (JMSException e) {
             e.printStackTrace();
         }finally {
@@ -53,4 +49,5 @@ public class provider {
             }
         }
     }
+
 }
