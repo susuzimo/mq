@@ -18,7 +18,17 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 /**
+ * 功能
+ * 性能
+ * 可用性
+ * 伸缩性
+ * 扩展性
  *类说明：消息队列的实现
+ *  *
+ 修改配置文件(activemq.xml)，增加延迟和定时投递支持
+ <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" dataDirectory="${activemq.data}" schedulerSupport="true">
+ 需要把几个描述消息定时调度方式的参数作为属性添加到消息，broker端的调度器就会按照我们想要的行为去处理消息。
+
  */
 @Service
 @Qualifier("mq")

@@ -4,7 +4,6 @@ package com.wtm.activemq.delayQueue.dao;
 import com.wtm.activemq.delayQueue.model.OrderExp;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
